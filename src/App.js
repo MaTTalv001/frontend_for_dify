@@ -1,25 +1,20 @@
 import logo from './logo.svg';
 import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Top from './pages/Top';
+import Function1 from './pages/Function1';
 
 function App() {
   return (
-    <div className="min-h-screen bg-base-200">
-      <div className="hero min-h-screen">
-        <div className="hero-content text-center">
-          <div className="max-w-md">
-            <img src={logo} className="App-logo mx-auto" alt="logo" />
-            <h1 className="text-5xl font-bold">AIミニアプリ</h1>
-            <p className="py-6">
-              業務効率のためのアプリ集です
-            </p>
-            <button className="btn btn-primary">
-              Start
-            </button>
-          </div>
-        </div>
+    <BrowserRouter>
+      <div className="min-h-screen bg-base-100">
+        <Routes>
+          <Route path="/" element={<Top />} />
+          <Route path="/function1" element={<Function1 />} />
+        </Routes>
       </div>
-    </div>
+    </BrowserRouter>
   );
- }
- 
- export default App;
+}
+
+export default App;
