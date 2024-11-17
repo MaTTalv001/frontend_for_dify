@@ -8,7 +8,7 @@ export default function Sidebar() {
   return (
     <ul className="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
       <li className="mb-4">
-        <h1 className="text-2xl font-bold">アプリ名</h1>
+        <h1 className="text-2xl font-bold">SHAPPs</h1>
       </li>
       
       {menuItems.map((item, index) => (
