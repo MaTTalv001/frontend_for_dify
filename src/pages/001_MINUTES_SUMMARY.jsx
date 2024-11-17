@@ -86,7 +86,7 @@ export default function Function1() {
     <div className="max-w-4xl mx-auto mt-10">
       {/* ヘッダーセクション */}
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-10">議事録生成アプリ</h1>
+        <h1 className="text-3xl font-bold mb-10">議事録作成支援アプリ</h1>
         <p className="mb-4">
           Teams会議の文字起こし(トランスクリプト)から議事録案を自動生成します。
         </p>
