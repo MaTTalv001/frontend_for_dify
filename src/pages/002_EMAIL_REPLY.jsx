@@ -7,6 +7,7 @@ import { useState } from "react";
 export default function EmailReply() {
   const [mail, setMail] = useState("");
   const [condition, setCondition] = useState("");
+  const [language, setLanguage] = useState("日本語");
   const [isLoading, setIsLoading] = useState(false);
   const [result, setResult] = useState("");
   const [error, setError] = useState("");
@@ -28,6 +29,7 @@ export default function EmailReply() {
             inputs: {
               mail: mail,
               condition: condition,
+              language: language,
             },
             response_mode: "blocking",
             user: "web-client", // 必要に応じて設定
@@ -81,7 +83,7 @@ export default function EmailReply() {
         <div className="space-y-6">
           <div className="form-control">
             <label className="label">
-              <span className="label-text font-bold">メール本文</span>
+              <span className="label-text font-bold">返信対象のメール本文</span>
               <span className="label-text-alt text-error">必須</span>
             </label>
             <textarea
@@ -104,6 +106,28 @@ export default function EmailReply() {
               value={condition}
               onChange={(e) => setCondition(e.target.value)}
             ></textarea>
+          </div>
+
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text font-bold">返信言語</span>
+            </label>
+            <div className="flex items-center gap-2">
+              <span className={language === "日本語" ? "font-bold" : ""}>
+                日本語
+              </span>
+              <input
+                type="checkbox"
+                className="toggle toggle-primary"
+                checked={language === "English"}
+                onChange={(e) =>
+                  setLanguage(e.target.checked ? "English" : "日本語")
+                }
+              />
+              <span className={language === "English" ? "font-bold" : ""}>
+                English
+              </span>
+            </div>
           </div>
 
           <div className="flex gap-4">
@@ -203,3 +227,5 @@ export default function EmailReply() {
 // {{mail}}
 // ## 条件
 // {{condition}}
+// ## 言語
+// {{language}}
