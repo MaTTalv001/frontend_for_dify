@@ -48,6 +48,7 @@ export const menuItems = [
 - `path`: ルーティングパス（例: "/function-name"）
 - `description`: 機能の説明文
 - `icon`: 機能を表すアイコン要素
+    - アイコンは`https://heroicons.com/`でパスを取得します。MITライセンスです。
 
 ### 2. ページコンポーネントの作成
 
