@@ -1,6 +1,6 @@
 // src/components/Sidebar.jsx
-import { Link, useLocation } from 'react-router-dom';
-import { menuItems } from '../configs/menuItems';
+import { Link, useLocation } from "react-router-dom";
+import { menuItems } from "../configs/menuItems";
 
 export default function Sidebar() {
   const location = useLocation();
@@ -8,13 +8,19 @@ export default function Sidebar() {
   return (
     <ul className="menu p-4 w-80 min-h-full bg-base-200 text-base-content">
       <li className="mb-4">
-        <h1 className="text-2xl font-bold">SHAPPs</h1>
+        <Link to="/">
+          <h1 className="text-2xl font-bold">SHAPPs</h1>
+        </Link>
       </li>
-      
+
       {menuItems.map((item, index) => (
-        <li key={index} className="tooltip tooltip-bottom" data-tip={item.description}>
-          <Link 
-            to={item.path} 
+        <li
+          key={index}
+          className="tooltip tooltip-bottom"
+          data-tip={item.description}
+        >
+          <Link
+            to={item.path}
             className={location.pathname === item.path ? "active" : ""}
           >
             {item.icon}

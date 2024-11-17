@@ -25,7 +25,7 @@ export const menuItems = [
   },
   {
     title: "議事録作成支援",
-    path: "/function1",
+    path: "/001_MINUTES_SUMMARY",
     description:
       "Teamsのトランスクリプトをもとにして、議事録の案を出力します。",
     icon: (
@@ -47,7 +47,7 @@ export const menuItems = [
   },
   {
     title: "メール返信支援",
-    path: "/function2",
+    path: "/002_EMAIL_REPLY",
     description:
       "メールの返信案を作成します。返信したいメールと、それに回答したい内容を簡潔に入力するだけです。",
     icon: (
@@ -63,6 +63,28 @@ export const menuItems = [
           strokeLinejoin="round"
           strokeWidth="2"
           d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+        />
+      </svg>
+    ),
+  },
+  {
+    title: "アンケート設計支援",
+    path: "/003_SURVEY_DESIGN",
+    description:
+      "いくつかの項目を入力することでアンケート設計の原案を出力します",
+    icon: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        className="h-5 w-5"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth="2"
+          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2M9 12h6m-6 4h6"
         />
       </svg>
     ),
