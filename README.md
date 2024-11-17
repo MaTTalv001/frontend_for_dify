@@ -19,7 +19,7 @@
 1. Difyでアプリケーションを作成し、APIキーを取得します
 2. 取得したAPIキーを`.env`ファイルの対応する変数に設定します
    - 例：`REACT_APP_MINUTES_SUMMARY_API=dify_api_key...`
-3. 新しいアプリのAPIキーの定義は.env.templateに書きます
+3. 新しいアプリを開発した場合はAPIキーの定数名を.env.templateに定義しておきます
    - 例：`REACT_APP_MAIL_TRANSLATE_API= ` 
 
 ## 新機能の開発手順
