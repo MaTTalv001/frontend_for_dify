@@ -151,7 +151,8 @@ function App() {
         <Route element={<Layout />}>
           <Route path="/001_MINUTES_SUMMARY" element={<MINUTES_SUMMARY />} />
           {/* 同様にさまざまなアプリのルーティング */}
-          <Route path="/new-function" element={<NewFunction />} /> //追加する
+          <Route path="/xxx_NEW_FUNCTION" element={<NewFunction />} />{" "}
+          //追加する
         </Route>
       </Routes>
     </BrowserRouter>
