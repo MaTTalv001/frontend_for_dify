@@ -1,4 +1,7 @@
-// src/pages/EmailReply.jsx
+// src/pages/Function2.jsx
+// Difyでメール返信支援アプリのエンドポイントを作成しておく
+// エンドポイントは.envでREACT_APP_EMAIL_REPLY_APIとして定義する
+
 import { useState } from "react";
 
 export default function EmailReply() {
@@ -27,7 +30,7 @@ export default function EmailReply() {
               condition: condition,
             },
             response_mode: "blocking",
-            user: "user-1", // 適切なユーザーIDを設定してください
+            user: "web-client", // 必要に応じて設定
           }),
         }
       );

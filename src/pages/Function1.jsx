@@ -1,4 +1,7 @@
 // src/pages/Function1.jsx
+// Difyで議事録作成支援アプリのエンドポイントを作成しておく
+// エンドポイントは.envでREACT_APP_MINUTES_SUMMARY_APIとして定義する
+
 import { useState } from 'react';
 
 export default function Function1() {
