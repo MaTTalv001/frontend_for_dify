@@ -5,29 +5,93 @@ export default function Function1() {
     const [transcriptText, setTranscriptText] = useState('');
     const [summaryResult, setSummaryResult] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
+        setSummaryResult('');
+        setError(null);
     
-    // モック処理
-    setTimeout(() => {
-        setSummaryResult('ここに議事録要約が表示されます。\n\n【会議概要】\n...\n\n【主な議題】\n...\n\n【決定事項】\n...');
-        setIsLoading(false);
-        }, 1500);
-    };
+        try {
+          const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/completion-messages`, {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${process.env.REACT_APP_MINUTES_SUMMARY_API}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              inputs: {
+                query: transcriptText,
+              },
+              response_mode: 'streaming',
+              user: 'web-client' // 必要に応じて適切なuser識別子を設定
+            })
+          });
+    
+          if (!response.ok) {
+            throw new Error(`API request failed: ${response.status}`);
+          }
+    
+          // ストリーミングレスポンスの処理
+          // ストリーミングレスポンスの処理部分を修正
+const reader = response.body.getReader();
+const decoder = new TextDecoder();
+let partialResponse = '';
+
+while (true) {
+  const { done, value } = await reader.read();
+  if (done) break;
+
+  // デコードしてレスポンスを処理
+  const text = decoder.decode(value);
+  const lines = (partialResponse + text).split('\n');
+  partialResponse = lines.pop() || '';
+
+  for (const line of lines) {
+    if (line.trim() === '') continue;
+    
+    // "data: " プレフィックスを除去
+    const jsonStr = line.replace(/^data: /, '').trim();
+    if (!jsonStr) continue;
+
+    try {
+      const data = JSON.parse(jsonStr);
+      if (data.event === 'message' && data.answer) {
+        setSummaryResult(prev => prev + data.answer);
+      }
+      // message_end イベントの処理も追加可能
+      if (data.event === 'message_end') {
+        console.log('Stream completed');
+      }
+    } catch (e) {
+      console.warn('Failed to parse streaming response line:', jsonStr);
+    }
+  }
+}
+    
+        } catch (err) {
+          setError('APIリクエスト中にエラーが発生しました。' + err.message);
+        } finally {
+          setIsLoading(false);
+        }
+      };
 
     return (
         <div className="max-w-4xl mx-auto mt-10">
             {/* ヘッダーセクション */}
             <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold mb-4">議事録要約ツール</h1>
-                <div className="alert alert-info">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="stroke-current shrink-0 w-6 h-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <span>Teams会議の文字起こしから議事録を自動生成します。</span>
-                </div>
+                <h1 className="text-3xl font-bold mb-10">議事録生成アプリ</h1>
+                <p className="mb-4">Teams会議の文字起こし(トランスクリプト)から議事録案を自動生成します。</p>
+                
+                {error && (
+        <div className="alert alert-error mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>{error}</span>
+        </div>
+      )}
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
@@ -40,7 +104,7 @@ export default function Function1() {
                         </label>
                         <textarea 
                             className="textarea textarea-bordered h-[400px] font-mono text-sm"
-                            placeholder="Teamsの文字起こしをコピー&ペーストしてください。話者情報などもそのまま貼り付けて構いませんが、議題は一つにしてください"
+                            placeholder="Teamsの文字起こしをコピー&ペーストしてください。話者情報などもそのまま貼り付けて構いませんが、議題の範囲は一つに限定してください"
                             value={transcriptText}
                             onChange={(e) => setTranscriptText(e.target.value)}
                             required
@@ -93,7 +157,7 @@ export default function Function1() {
                     className="textarea textarea-bordered h-[400px]"
                     value={summaryResult}
                     readOnly
-                    placeholder="要約結果がここに表示されます"
+                    placeholder="議事録案がここに表示されます"
                     ></textarea>
                 </div>
                 </div>
@@ -108,7 +172,7 @@ export default function Function1() {
                 </div>
             <div className="collapse-content"> 
                 <p>1. Teams会議の文字起こしをコピーします</p>
-                <p className="mt-4 text-sm text-warning">一つの議題の範囲に限定してください。複数の議題が混ざると要約できません</p>
+                <p className="mt-4 text-sm text-warning">一つの議題の範囲に限定してください。複数あると要約できません</p>
                 <p>2. 左側のテキストエリアにペーストします</p>
                 <p className="mt-4 text-sm text-warning"> 話者名を含めそのまま貼り付けて構いません。</p>
                 <p>3. 「要約開始」ボタンをクリックします</p>
@@ -122,3 +186,25 @@ export default function Function1() {
     </div>
     );
 }
+
+// 本番用のhandleSubmit
+// const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setIsLoading(true);
+//     try {
+//       const response = await fetch(process.env.MINUTES_SUMMARY_API, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ text: transcriptText }),
+//       });
+//       const data = await response.json();
+//       setSummaryResult(data.summary);
+//     } catch (error) {
+//       console.error('Error:', error);
+//       // エラー処理
+//     } finally {
+//       setIsLoading(false);
+//     }
+//   };

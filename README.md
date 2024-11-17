@@ -1,13 +1,32 @@
-```markdown
 # アプリケーション開発ガイド
 
-## 新機能の追加手順
+## 初期設定
 
-新しい機能を追加する際は、以下の手順に従ってください。
+### 1. 環境変数の設定
+
+1. `.env.template`をコピーして`.env`ファイルを作成します
+2. `.env`ファイルに必要な環境変数を設定します：
+   ```env
+   # API Endpoints
+   REACT_APP_API_BASE_URL=http://localhost/v1
+   
+   # API Keys
+   REACT_APP_MINUTES_SUMMARY_API=your-api-key-here
+   ```
+   
+### 2. Dify APIの設定
+
+1. Difyでアプリケーションを作成し、APIキーを取得します
+2. 取得したAPIキーを`.env`ファイルの対応する変数に設定します
+   - 例：`REACT_APP_MINUTES_SUMMARY_API=dify_api_key...`
+3. 新しいアプリのAPIキーの定義は.env.templateに書きます
+   - 例：`REACT_APP_MAIL_TRANSLATE_API= ` 
+
+## 新機能の開発手順
 
 ### 1. 機能定義の追加
 
-`src/configs/menuItems.js` に新機能の定義を追加します。
+`src/configs/menuItems.js` に新機能の定義を追加します：
 
 ```javascript
 export const menuItems = [
@@ -20,8 +39,7 @@ export const menuItems = [
         // アイコンのパスを設定
       </svg>
     )
-  },
-  // 既存の機能定義...
+  }
 ];
 ```
 
@@ -35,33 +53,60 @@ export const menuItems = [
 
 `src/pages` ディレクトリに新機能のコンポーネントファイルを作成します。
 
+基本的なAPIリクエスト処理の例：
 ```jsx
-// src/pages/NewFunction.jsx
-export default function NewFunction() {
-  return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">新機能タイトル</h1>
-      {/* 機能の実装をここに追加 */}
-    </div>
-  );
-}
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
+  
+  try {
+    const response = await fetch(`${process.env.REACT_APP_API_BASE_URL}/completion-messages`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.REACT_APP_MINUTES_SUMMARY_API}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        inputs: {
+          query: inputText,  // 入力テキスト
+        },
+        response_mode: 'streaming',
+        user: 'web-client'
+      })
+    });
+
+    // ストリーミングレスポンスの処理
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      
+      const text = decoder.decode(value);
+      // レスポンスの処理...
+    }
+
+  } catch (error) {
+    console.error('Error:', error);
+  } finally {
+    setIsLoading(false);
+  }
+};
 ```
 
 ### 3. ルーティングの追加
 
-`src/App.jsx` に新機能のルートを追加します。
+`src/App.jsx` に新機能のルートを追加します：
 
 ```jsx
 import NewFunction from './pages/NewFunction';
-
-// ... 既存のimport文
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<Layout />}>
-          {/* 既存のルート */}
           <Route path="/new-function" element={<NewFunction />} />
         </Route>
       </Routes>
@@ -70,24 +115,19 @@ function App() {
 }
 ```
 
-## 機能の更新・メンテナンス
-
-- 機能の表示名や説明文を変更する場合は `menuItems.js` を更新します
-- 機能の実装を変更する場合は対応するページコンポーネントを更新します
-- ルーティングパスを変更する場合は、`menuItems.js` と `App.jsx` の両方を更新してください
-
 ## デザインガイドライン
 
 - ページコンポーネントでは Daisy UI のコンポーネントを活用してください
 - レスポンシブデザインを考慮し、適切なグリッドシステムを使用してください
-- アイコンは統一感のあるデザインを使用してください
+- アイコンは [Heroicons](https://heroicons.com/) から選択して使用してください
 
 ## 注意事項
 
-- トップページの機能一覧は `menuItems.js` から自動生成されます
-- サイドバーのツールチップも `menuItems.js` の説明文を使用します
-- 不要な機能を非表示にしたい場合は、一時的に `menuItems.js` から削除してください
-```
+- 環境変数は必ず`REACT_APP_`プレフィックスを付けてください
+- APIキーは`.env`ファイルで管理し、`.gitignore`に含めてください
+- 各機能のAPIリクエストはDifyの仕様に従って実装してください
+- トップページの機能一覧は`menuItems.js`から自動生成されます
+- サイドバーのツールチップも`menuItems.js`の説明文を使用します
 
 
 
